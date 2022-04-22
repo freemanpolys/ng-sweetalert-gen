@@ -1,0 +1,54 @@
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { SwalComponent, SwalPortalTargets } from '@sweetalert2/ngx-sweetalert2';
+import Swal from 'sweetalert2';
+
+@Component({
+  selector: 'app-campaign',
+  templateUrl: './campaign.component.html',
+  styleUrls: ['./campaign.component.css']
+})
+export class {{ .swalId | toTitle }}Component implements OnInit {
+
+      {{ .swalId | toLower }}Form = new FormGroup({
+        {{ range .elements -}}
+          {{ .Value | toLower }}: new FormControl('', [Validators.required]),
+        {{ end -}}
+          });
+      constructor(public readonly swalTargets: SwalPortalTargets) { }
+
+      ngOnInit(): void {}
+
+      {{ .swalId }}Submit(value: FormGroup){
+        {{ range .elements -}}
+        let {{ .Value | toLower }} = this.{{ $.swalId | toLower }}Form.controls.{{ .Value | toLower }}.value;
+        {{ end -}} 
+      }
+
+      // Fire swal programmaticaly for confirmation
+      confirmBox(){
+        Swal.fire({
+          title: 'Are you sure want to remove?',
+          text: 'You will not be able to recover this file!',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'Yes, delete it!',
+          cancelButtonText: 'No, keep it'
+        }).then((result) => {
+          if (result.value) {
+            Swal.fire(
+              'Deleted!',
+              'Your imaginary file has been deleted.',
+              'success'
+            )
+          } else if (result.dismiss === Swal.DismissReason.cancel) {
+            Swal.fire(
+              'Cancelled',
+              'Your imaginary file is safe :)',
+              'error'
+            )
+          }
+        })
+      }
+
+}

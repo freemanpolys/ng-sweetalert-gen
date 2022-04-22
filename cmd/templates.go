@@ -3,4 +3,7 @@ package cmd
 import "embed"
 
 //go:embed templates/swal_form.html.gotmpl
-var swal_form embed.FS
+var swalForm embed.FS
+
+//go:embed templates/form_group.ts.gotmpl
+var formGroup embed.FS

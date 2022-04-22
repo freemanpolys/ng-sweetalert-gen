@@ -14,6 +14,7 @@ require (
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/kr/pretty v0.2.0 // indirect
 	github.com/magiconair/properties v1.8.6 // indirect
+	github.com/metal3d/go-slugify v0.0.0-20160607203414-7ac2014b2f23
 	github.com/mitchellh/mapstructure v1.4.3 // indirect
 	github.com/pelletier/go-toml v1.9.4 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.0-beta.8 // indirect

@@ -17,10 +17,10 @@ package cmd
 
 import (
 	"fmt"
-	"html/template"
 	"os"
 	"strings"
 
+	"github.com/metal3d/go-slugify"
 	"github.com/spf13/cobra"
 )
 
@@ -58,28 +58,23 @@ var htmlCmd = &cobra.Command{
 				os.Exit(0)
 			}
 		}
+		swalId = slugify.Marshal(swalId)
 		fmt.Println("html elements : ", elements)
-		tmplFile, _ := swal_form.ReadFile("templates/swal_form.html.gotmpl")
-		tmpl, err := template.New("swal_form").Funcs(template.FuncMap{
-			"toLower": strings.ToLower,
-			"toTitle": func(i interface{}) string {
-				return strings.Title(fmt.Sprintf("%v", i))
-			},
-			"isTextArea": func(e FormElementType) bool {
-				return e == Textarea
-			},
-			"isSelect": func(e FormElementType) bool {
-				return e == Select
-			},
-		}).Parse(string(tmplFile))
+		data := map[string]interface{}{"title": title, "swalId": swalId, "elements": elements}
 
+		htmlFile, err := swalForm.ReadFile("templates/swal_form.html.gotmpl")
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(0)
 		}
-		if err = tmpl.Execute(os.Stdout, map[string]interface{}{"title": title, "swalId": swalId, "elements": elements}); err != nil {
+		ProcessTmplFiles(".", swalId+"-swal-form.html", htmlFile, data, false)
+
+		tsFile, err := formGroup.ReadFile("templates/form_group.ts.gotmpl")
+		if err != nil {
 			fmt.Println(err)
+			os.Exit(0)
 		}
+		ProcessTmplFiles(".", swalId+"-componnent.ts", tsFile, data, true)
 
 	},
 }

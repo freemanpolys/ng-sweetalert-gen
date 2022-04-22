@@ -1,4 +1,4 @@
-<swal #{{ .swalId }}Swal title="{{ .title }}" [swalOptions]="{allowOutsideClick: false}"  (confirm)="createCampaign(campaignForm.value)">
+<swal #{{ .swalId }}Swal title="{{ .title }}" [swalOptions]="{allowOutsideClick: false}"  (confirm)="{{ .swalId }}Submit({{ .swalId | toLower }}Form.value)">
     <!-- This form will be displayed as the alert main content
          Targets the alert's main content zone by default -->
     <form *swalPortal [formGroup]="{{ .swalId | toLower }}Form">
