@@ -1,0 +1,1 @@
+# ng-sweetalert-gen
