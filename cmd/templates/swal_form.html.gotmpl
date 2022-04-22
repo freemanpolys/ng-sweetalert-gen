@@ -1,0 +1,35 @@
+<swal #{{ .swalId }}Swal title="{{ .title }}" [swalOptions]="{allowOutsideClick: false}"  (confirm)="createCampaign(campaignForm.value)">
+    <!-- This form will be displayed as the alert main content
+         Targets the alert's main content zone by default -->
+    <form *swalPortal [formGroup]="{{ .swalId | ToLower }}Form">
+      <div class="form-group text-left">
+        <label >Nom <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" formControlName="name" aria-describedby="nameHelp" placeholder="Entrez le nom de la campagne." required>
+        <small id="nameHelp" class="form-text text-muted">Ex: Lancement produit X</small>
+      </div>
+      <!--
+        <div class="form-group">
+            <label >Template de message</label>
+            <select class="form-control"  >
+                <option>-- Aucun --</option>
+            </select>
+            <small id="messageHelp" class="form-text text-muted">Choisissez des messages prédéfinis pour la campagne</small>
+        </div> -->
+        <div class="form-group">
+            <label >Mode d'envoi</label>
+            <select class="form-control" formControlName="mode">
+                <option [ngValue]="MANUAL" [selected]="true">Manuel</option>
+            </select>
+            <small id="modeHelp" class="form-text text-muted">Dans le mode automatique, le message de la campagne est automatiquement envoyé à tous les nouveaux numéros</small>
+        </div>
+    </form>
+
+    <!-- This targets the confirm button's inner content
+         Notice the usage of ng-container to avoid creating an useless DOM element inside the button -->
+    <button *swalPortal="swalTargets.closeButton" type="button" class="close" data-dismiss="alert" aria-label="Close" >
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <ng-container *swalPortal="swalTargets.confirmButton">
+      Envoyer
+    </ng-container>
+  </swal>
