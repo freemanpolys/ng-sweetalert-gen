@@ -1,29 +1,31 @@
 <swal #{{ .swalId }}Swal title="{{ .title }}" [swalOptions]="{allowOutsideClick: false}"  (confirm)="createCampaign(campaignForm.value)">
     <!-- This form will be displayed as the alert main content
          Targets the alert's main content zone by default -->
-    <form *swalPortal [formGroup]="{{ .swalId | ToLower }}Form">
-      <div class="form-group text-left">
-        <label >Nom <span class="text-danger">*</span></label>
-        <input type="text" class="form-control" formControlName="name" aria-describedby="nameHelp" placeholder="Entrez le nom de la campagne." required>
-        <small id="nameHelp" class="form-text text-muted">Ex: Lancement produit X</small>
-      </div>
-      <!--
-        <div class="form-group">
-            <label >Template de message</label>
-            <select class="form-control"  >
-                <option>-- Aucun --</option>
+    <form *swalPortal [formGroup]="{{ .swalId | toLower }}Form">
+      {{ range .elements -}}
+        {{- if isTextArea .Type -}}
+          <div class="form-group">
+            <label for="{{ .Value }}Textarea">{{ .Value | toTitle }}</label>
+            <textarea class="form-control" id="{{ .Value }}Textarea" rows="3" formControlName="{{ .Value | toLower }}"></textarea>
+          </div>
+          {{ else if isSelect .Type -}}
+          <div class="form-group">
+            <label for="{{ .Value }}{{call .Type.String  | toTitle }}">{{ .Value  | toTitle }}</label>
+            <select class="form-control" id="{{ .Value }}Select" aria-describedby="{{ .Value }}SelectHelp" formControlName="{{ .Value | toLower }}">
+                <option>-- Choose --</option>
+                <option [ngValue]="{{ .Value }}1" [selected]="true">{{ .Value }} 1</option>
             </select>
-            <small id="messageHelp" class="form-text text-muted">Choisissez des messages prédéfinis pour la campagne</small>
-        </div> -->
-        <div class="form-group">
-            <label >Mode d'envoi</label>
-            <select class="form-control" formControlName="mode">
-                <option [ngValue]="MANUAL" [selected]="true">Manuel</option>
-            </select>
-            <small id="modeHelp" class="form-text text-muted">Dans le mode automatique, le message de la campagne est automatiquement envoyé à tous les nouveaux numéros</small>
+            <small id="{{ .Value }}SelectHelp" class="form-text text-muted">Choose option for {{ .Value }} </small>
         </div>
+          {{ else -}}
+          <div class="form-group text-left">
+            <label >{{ .Value  | toTitle }}<span class="text-danger">*</span></label>
+            <input type="{{ .Type }}" class="form-control" formControlName="{{ .Value | toLower }}" aria-describedby="{{ .Value }}{{ .Type  | toTitle }}Help" placeholder="Enter value for {{ .Value }}." required>
+            <small id="{{ .Value }}{{ .Type  | toTitle }}Help" class="form-text text-muted">Description for {{ .Value }} </small>
+          </div>
+          {{ end -}}
+      {{- end -}}
     </form>
-
     <!-- This targets the confirm button's inner content
          Notice the usage of ng-container to avoid creating an useless DOM element inside the button -->
     <button *swalPortal="swalTargets.closeButton" type="button" class="close" data-dismiss="alert" aria-label="Close" >

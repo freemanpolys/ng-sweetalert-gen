@@ -2,29 +2,38 @@ package cmd
 
 import "errors"
 
-type HtmlFormInputType string
+type FormElementType int
+
+type FormElement struct {
+	Tag   string
+	Type  FormElementType
+	Value string
+}
 
 const (
-	Text     HtmlFormInputType = "text"
-	Number   HtmlFormInputType = "number"
-	Textarea HtmlFormInputType = "textarea"
+	Text FormElementType = iota
+	Number
+	Textarea
+	Select
 )
 
-func (e HtmlFormInputType) String() string {
-	return string(e)
+func (e FormElementType) String() string {
+	return []string{"text", "number", "textarea", "select"}[e]
 }
 
-var supportedType map[string]HtmlFormInputType
+var supportedType map[string]FormElement
 
 func init() {
-	supportedType = make(map[string]HtmlFormInputType)
-	supportedType["text"] = Text
-	supportedType["number"] = Number
-	supportedType["textarea"] = Textarea
+	supportedType = make(map[string]FormElement)
+	supportedType["text"] = FormElement{Tag: "input", Type: Text}
+	supportedType["number"] = FormElement{Tag: "input", Type: Number}
+	supportedType["textarea"] = FormElement{Tag: "textarea", Type: Textarea}
+	supportedType["select"] = FormElement{Tag: "select", Type: Select}
+
 }
 
-func GetHtmlFormInputType(input string) (result HtmlFormInputType, err error) {
-	result, ok := supportedType[input]
+func GetHtmlFormInputType(input string) (formTag FormElement, err error) {
+	formTag, ok := supportedType[input]
 	if !ok {
 		err = errors.New("HtmlFormInputType not found")
 	}

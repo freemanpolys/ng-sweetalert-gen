@@ -42,32 +42,44 @@ var htmlCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		split := strings.Split(fields, ",")
 		fmt.Println("html split : ", split)
-		fieldsMap := make(map[string]HtmlFormInputType)
+		elements := make([]FormElement, 0)
 		for _, v := range split {
 			if strings.Contains(v, ":") {
 				field := strings.Split(v, ":")
-				fieldType, err := GetHtmlFormInputType(field[1])
+				element, err := GetHtmlFormInputType(field[1])
 				if err != nil {
 					fmt.Println("Field type '", field[1], "' not supported")
 					os.Exit(0)
 				}
-				fieldsMap[field[0]] = fieldType
+				element.Value = field[0]
+				elements = append(elements, element)
 			} else {
 				fmt.Println("Syntax error with field '", v, "'. Run 'ng-sweetalert-gen html -h' for help.")
 				os.Exit(0)
 			}
 		}
-		fmt.Println("html fieldsMap : ", fieldsMap)
-
-		tmplFile, _ := swalForm.ReadFile("templates/swal_form.html.gotmpl")
+		fmt.Println("html elements : ", elements)
+		tmplFile, _ := swal_form.ReadFile("templates/swal_form.html.gotmpl")
 		tmpl, err := template.New("swal_form").Funcs(template.FuncMap{
-			"ToLower": strings.ToLower,
+			"toLower": strings.ToLower,
+			"toTitle": func(i interface{}) string {
+				return strings.Title(fmt.Sprintf("%v", i))
+			},
+			"isTextArea": func(e FormElementType) bool {
+				return e == Textarea
+			},
+			"isSelect": func(e FormElementType) bool {
+				return e == Select
+			},
 		}).Parse(string(tmplFile))
+
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(0)
 		}
-		tmpl.Execute(os.Stdout, map[string]interface{}{"title": title, "swalId": swalId})
+		if err = tmpl.Execute(os.Stdout, map[string]interface{}{"title": title, "swalId": swalId, "elements": elements}); err != nil {
+			fmt.Println(err)
+		}
 
 	},
 }
